@@ -1,113 +1,160 @@
-import Image from 'next/image'
+"use client";
+import { useState, useEffect, useRef } from "react";
+
+import Image from "next/image";
+import LogOut from "@/components/LogOut";
+import Favorites from "@/components/Favorites";
+import RandomKitty from "@/components/RandomKitty";
+import SignInModal from "@/components/SignInModal";
+import PreviewModal from "@/components/PreviewModal";
+import AllFavoritesModal from "@/components/AllFavoritesModal";
+import { Spinner } from "@/components/Spinner";
 
 export default function Home() {
+  let initialData = { username: "", favorites: [] }; // Initialize Local Storage with array of two objects for username and kitty favorites
+  const [sliderIndex, setSliderIndex] = useState(0);
+  const [kittyCityData, setKittyCityData] = useState(initialData); //Local Storage
+  const [cat, setCat] = useState([]); // Random Cat
+  const [showSignIn, setShowSignIn] = useState(true); // Show "Sign In"
+  const [showLogOut, setShowLogOut] = useState(false); // Show "Log Out"
+  const [showPreviewModal, setShowPreviewModal] = useState(false); // Show Image Preview Modal
+  const [isLoading, setIsLoading] = useState(true); // Show Spinner
+  const [showFavoritesModal, setShowFavoritesModal] = useState(false); // Show users Favorite Kitties Modal
+  const selectedFavorite = useRef(null); // Image from Favorites Slider to be shown in Preview Modal
+  const [kittyFact, setKittyFact] = useState(""); //random kitty fact
+
+  async function fetchCat() {
+    const randomCat = await fetch(`${process.env.NEXT_PUBLIC_CAT_API_URL}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.CAT_API,
+      },
+    });
+    const randomFact = await fetch(`${process.env.NEXT_PUBLIC_CAT_FACT_URL}`);
+
+    const cat = await randomCat.json();
+    const fact = await randomFact.json();
+
+    setKittyFact(fact.fact);
+    setCat(cat[0]);
+  }
+
+  useEffect(() => {
+    let kittyCityData = localStorage.getItem("kittyCityData");
+    let storedData;
+
+    if (kittyCityData) {
+      kittyCityData = JSON.parse(kittyCityData);
+      if (kittyCityData.username) {
+        setShowSignIn(false);
+      }
+      try {
+        storedData = kittyCityData;
+        console.log(storedData);
+
+        if (Object.keys(storedData).length < 2) {
+          storedData = initialData;
+        }
+      } catch (error) {
+        console.error("Error parsing stored kittyCityData:", error);
+        storedData = initialData;
+      }
+    } else {
+      storedData = initialData;
+    }
+
+    setKittyCityData(storedData);
+    fetchCat();
+    setIsLoading(false); // Data is fetched, set loading to false
+  }, []);
+
+  const fetchNewCat = () => {
+    fetchCat();
+  };
+
+  const saveCatToFavorites = (cat) => {
+    setKittyCityData((prevkittyCityData) => {
+      // If the object was found and the current cat is not already a favorite
+      if (!prevkittyCityData.favorites.some((favCat) => favCat.id === cat.id)) {
+        prevkittyCityData.favorites.push(cat);
+      }
+      // Update the local storage
+      localStorage.setItem("kittyCityData", JSON.stringify(prevkittyCityData));
+
+      if (prevkittyCityData.favorites.length >= 5) {
+        setSliderIndex(prevkittyCityData.favorites.length - 5);
+      }
+
+      // Return the updated state
+      return { ...prevkittyCityData };
+    });
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <>
+      <div className="flex align-center text-center py-5 w-full border">
+        <h1 className="w-full text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+          Kitty City
+        </h1>
+        {kittyCityData.username && (
+          <LogOut
+            kittyCityData={kittyCityData}
+            setKittyCityData={setKittyCityData}
+            initialData={initialData}
+            showLogOut={showLogOut}
+            setShowLogOut={setShowLogOut}
+            setShowSignIn={setShowSignIn}
+          ></LogOut>
+        )}
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <main className="flex min-h-screen flex-col items-center  mx-auto">
+        {/* <Spinner isLoading={isLoading}></Spinner> */}
+        {!showSignIn && (
+          <>
+            <Favorites
+              sliderIndex={sliderIndex}
+              setSliderIndex={setSliderIndex}
+              favorites={kittyCityData.favorites}
+              selectedFavorite={selectedFavorite}
+              changeCat={setCat}
+              setShowPreviewModal={setShowPreviewModal}
+              setShowFavoritesModal={setShowFavoritesModal}
+            ></Favorites>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+            <p>{kittyFact}</p>
+            <RandomKitty
+              cat={cat}
+              fetchNewCat={fetchNewCat}
+              saveCatToFavorites={saveCatToFavorites}
+            ></RandomKitty>
+          </>
+        )}
+      </main>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+      {showSignIn && (
+        <SignInModal
+          kittyCityData={kittyCityData}
+          setKittyCityData={setKittyCityData}
+          showSignIn={showSignIn}
+          setShowSignIn={setShowSignIn}
+        ></SignInModal>
+      )}
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+      {showPreviewModal && (
+        <PreviewModal
+          selectedFavoritePic={selectedFavorite}
+          setShowPreviewModal={setShowPreviewModal}
+        ></PreviewModal>
+      )}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      {showFavoritesModal && (
+        <AllFavoritesModal
+          username={kittyCityData.username}
+          setShowFavoritesModal={setShowFavoritesModal}
+          favorites={kittyCityData.favorites}
+        ></AllFavoritesModal>
+      )}
+    </>
+  );
 }
