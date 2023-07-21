@@ -92,8 +92,8 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex align-center text-center py-5 w-full border">
-        <h1 className="w-full text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+      <div className="flex align-center justify-end text-center py-5 w-full relative ">
+        <h1 className="w-full absolute text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
           Kitty City
         </h1>
         {kittyCityData.username && (
@@ -108,7 +108,7 @@ export default function Home() {
         )}
       </div>
 
-      <main className="flex min-h-screen flex-col items-center  mx-auto">
+      <main className="flex  flex-col items-center  mx-auto">
         {/* <Spinner isLoading={isLoading}></Spinner> */}
         {!showSignIn && (
           <>
@@ -122,7 +122,9 @@ export default function Home() {
               setShowFavoritesModal={setShowFavoritesModal}
             ></Favorites>
 
-            <p>{kittyFact}</p>
+            <div className="min-h-[100px] flex items-center justify-center p-4 w-[90%] mx-auto text-center">
+              {kittyFact}
+            </div>
             <RandomKitty
               cat={cat}
               fetchNewCat={fetchNewCat}

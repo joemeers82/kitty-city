@@ -17,7 +17,7 @@ export default function PreviewModal({
       className=" border absolute top-0 z-10 w-full h-full flex flex-col items-center  bg-gray-transparent "
       onClick={handleBackgroundClick}
     >
-      <div className="h-full w-full absolute flex items-center justify-center">
+      <div className="h-full mx-auto w-[90%] md:w-full absolute flex items-center justify-center">
         <div className="relative h-[500px] w-[500px]">
           <Image
             src={selectedFavoritePic.current.url}

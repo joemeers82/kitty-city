@@ -7,42 +7,57 @@ export default function SignInModal({
   setShowSignIn,
 }) {
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
-  const saveName = (name) => {
-    setKittyCityData((prevkittyCityData) => {
-      // Find the object with the username key
-      let username = prevkittyCityData.username;
+  const saveName = (event) => {
+    event.preventDefault(); // Prevent form submission
+    if (name.trim() === "") {
+      setError("Please enter your name");
+    } else {
+      setError(""); // clear error if any exists
+      setKittyCityData((prevkittyCityData) => {
+        let username = prevkittyCityData.username;
 
-      // If the object was found, update the username
-      if (typeof username == "string" && username == "") {
-        prevkittyCityData.username = name;
-      }
+        if (typeof username == "string" && username == "") {
+          prevkittyCityData.username = name;
+        }
 
-      // Update the local storage
-      localStorage.setItem("kittyCityData", JSON.stringify(prevkittyCityData));
-      setShowSignIn(false);
-      // Return the updated state
-      return prevkittyCityData;
-    });
+        localStorage.setItem(
+          "kittyCityData",
+          JSON.stringify(prevkittyCityData)
+        );
+        setShowSignIn(false);
+        return prevkittyCityData;
+      });
+    }
   };
 
   return (
-    <div className="border absolute top-0 z-10 w-full h-full flex items-center justify-center bg-gray-transparent">
-      <div className="h-[300px] w-[300px] flex items-center justify-center rounded bg-white">
-        <div className="flex flex-col h-full border">
-          <p className="text-center">Welcome to Kitty City!</p>
-          <p className="text-center">What's your name?</p>
-          <form>
-            <input
-              className="border"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <button type="submit" onClick={() => saveName(name)}>
-              Submit
-            </button>
-          </form>
+    <div className="absolute top-0 z-[4] w-full h-full flex items-center justify-center  mt-[400px] ">
+      <div className="h-[300px] w-[300px] flex items-center justify-center rounded bg-white  rounded border-[5px] border-[#a855f7] ">
+        <div className="flex flex-col h-full justify-center">
+          <p className="text-center text-2xl">Welcome to Kitty City!</p>
+          <div className="mt-[30px] text-center">
+            <p className="text-center">What's your name?</p>
+            <form>
+              <input
+                className="border"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              {error && <p className="text-red-500">{error}</p>}
+              <p>
+                <button
+                  className="border border-2 border-[#a855f7] rounded px-5 mt-5"
+                  type="submit"
+                  onClick={saveName}
+                >
+                  Submit
+                </button>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </div>

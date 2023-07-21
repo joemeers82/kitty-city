@@ -11,7 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={` ${inter.className} relative`}>{children}</body>
+      <body className={` ${inter.className} relative max-w-screen-xl mx-auto`}>
+        {children}
+      </body>
     </html>
   );
 }

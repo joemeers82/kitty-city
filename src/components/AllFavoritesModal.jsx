@@ -12,9 +12,19 @@ export default function AllFavoritesModal({
   };
   return (
     <>
-      <div className="h-full w-full absolute bg-white z-5 top-0">
-        <h2>{username}'s top picks</h2>
-        <span onClick={() => close()}>Close</span>
+      <div className="h-full w-full absolute bg-white z-[6] top-[100px]">
+        <div
+          className="flex justify-between px-5
+        "
+        >
+          <h2>{username}'s top picks</h2>
+          <span
+            className="hover:text-[#a855f7] cursor-pointer ease-in-out duration-200 mt-1"
+            onClick={() => close()}
+          >
+            Go Back
+          </span>
+        </div>
         <div className="h-full w-full grid grid-cols-4 max-w-screen-lg	gap-4 mx-auto grid-auto-rows-1fr grid-auto-columns-1fr">
           {favorites.map((pic, i) => {
             //   const isActive = pic.id === selectedFavoritePic.current.id;

@@ -37,13 +37,13 @@ export default function Favorites({
 
   return (
     <>
-      {favorites && (
+      {favorites.length > 0 && (
         <>
-          <div className="flex items-center relative">
-            <div className="w-[565px] overflow-hidden flex rounded-[50px] flex items-center">
+          <div className="w-[90%] md:max-w-fit flex items-center relative mt-10">
+            <div className=" mx-auto w-[331px] md:w-[565px] overflow-hidden flex rounded-[50px] flex items-center">
               {hideArrow && (
                 <button
-                  className="z-10 absolute bg-white carousel-button border flex justify-center items-center rounded-full h-[30px] w-[30px]"
+                  className="z-[3] left-0 md:left-[-10px] absolute bg-white carousel-button border flex justify-center items-center rounded-full h-[30px] w-[30px]"
                   onClick={slideLeft}
                 >
                   {"<"}
@@ -73,7 +73,7 @@ export default function Favorites({
               </ul>
               {favorites.length > 5 && favorites.length - 5 > sliderIndex && (
                 <button
-                  className="z-10 absolute right-0 bg-white carousel-button border flex justify-center items-center rounded-full h-[30px] w-[30px]"
+                  className="z-[3] absolute right-0 md:right-[-10px] bg-white carousel-button border flex justify-center items-center rounded-full h-[30px] w-[30px]"
                   onClick={slideRight}
                 >
                   {">"}
@@ -82,7 +82,10 @@ export default function Favorites({
             </div>
           </div>
           <div className="p-5">
-            <button onClick={() => setShowFavoritesModal(true)}>
+            <button
+              className="hover:text-[#a855f7] cursor-pointer ease-in-out duration-200 mt-1"
+              onClick={() => setShowFavoritesModal(true)}
+            >
               See all of your favorite kitties
             </button>
           </div>
