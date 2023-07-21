@@ -17,7 +17,7 @@ export default function AllFavoritesModal({
           className="flex justify-between px-5
         "
         >
-          <h2>{username}'s top picks</h2>
+          <h2> {`${username}'s`} top picks</h2>
           <span
             className="hover:text-[#a855f7] cursor-pointer ease-in-out duration-200 mt-1"
             onClick={() => close()}

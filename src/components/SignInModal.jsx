@@ -38,7 +38,7 @@ export default function SignInModal({
         <div className="flex flex-col h-full justify-center">
           <p className="text-center text-2xl">Welcome to Kitty City!</p>
           <div className="mt-[30px] text-center">
-            <p className="text-center">What's your name?</p>
+            <p className="text-center">{`What's your name?`}</p>
             <form>
               <input
                 className="border"
