@@ -93,7 +93,7 @@ export default function Home() {
   return (
     <>
       <div className="flex align-center justify-end text-center py-5 w-full relative ">
-        <h1 className="w-full absolute text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        <h1 className="h-[60px] w-full absolute text-5xl text-transparent font-bold bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
           Kitty City
         </h1>
         {kittyCityData.username && (

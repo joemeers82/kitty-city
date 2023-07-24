@@ -39,7 +39,7 @@ export default function Favorites({
     <>
       {favorites.length > 0 && (
         <>
-          <div className="w-[90%] md:max-w-fit flex items-center relative mt-10">
+          <div className="w-[90%] md:max-w-fit flex items-center relative mt-5 md:mt-10">
             <div className=" mx-auto w-[331px] md:w-[565px] overflow-hidden flex rounded-[50px] flex items-center">
               {hideArrow && (
                 <button
